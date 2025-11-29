@@ -16,22 +16,55 @@ module clock
     
 always_comb begin
     enable = 1'b0;
-    if (PED)
-        enable = (counter == 6'd11 ||
-                  counter == 6'd13 ||
-                  counter == 6'd15 ||
-                  counter == 6'd26 ||
-                  counter == 6'd28 ||
-                  counter == 6'd30 ||
-                  counter == 6'd40);
-    else
-        enable = (counter == 6'd11 ||
-                  counter == 6'd13 ||
-                  counter == 6'd15 ||
-                  counter == 6'd26 ||
-                  counter == 6'd28 ||
-                  counter == 6'd30);
-    end 
+    if (PED) begin
+        if (mGTs)
+            enable = (counter == 6'd15 ||
+                      counter == 6'd17 ||
+                      counter == 6'd19 ||
+                      counter == 6'd25 ||
+                      counter == 6'd27 ||
+                      counter == 6'd29 ||
+                      counter == 6'd39);
+        else if (mLTs)
+            enable = (counter == 6'd11 ||
+                      counter == 6'd13 ||
+                      counter == 6'd15 ||
+                      counter == 6'd29 ||
+                      counter == 6'd31 ||
+                      counter == 6'd33 ||
+                      counter == 6'd43);
+        else 
+            enable = (counter == 6'd11 ||
+                      counter == 6'd13 ||
+                      counter == 6'd15 ||
+                      counter == 6'd25 ||
+                      counter == 6'd27 ||
+                      counter == 6'd29 ||
+                      counter == 6'd39);
+    end
+    else begin
+        if (mGTs)
+            enable = (counter == 6'd15 ||
+                      counter == 6'd17 ||
+                      counter == 6'd19 ||
+                      counter == 6'd25 ||
+                      counter == 6'd27 ||
+                      counter == 6'd29);
+        else if (mLTs)
+            enable = (counter == 6'd11 ||
+                      counter == 6'd13 ||
+                      counter == 6'd15 ||
+                      counter == 6'd29 ||
+                      counter == 6'd31 ||
+                      counter == 6'd33);
+        else 
+            enable = (counter == 6'd11 ||
+                      counter == 6'd13 ||
+                      counter == 6'd15 ||
+                      counter == 6'd25 ||
+                      counter == 6'd27 ||
+                      counter == 6'd29);
+    end
 end
 
 endmodule
