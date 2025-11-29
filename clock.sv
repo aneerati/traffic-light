@@ -10,8 +10,7 @@ module clock
 always_comb begin
     enable = 1'b0;
     if(PED) begin
-        enable =  (counter == 6'd0 ||
-                  counter == 6'd11 ||
+        enable =  (counter == 6'd11 ||
                   counter == 6'd13 ||
                   counter == 6'd15 ||
                   counter == 6'd21 ||
@@ -20,8 +19,7 @@ always_comb begin
     end 
 
     else begin
-        enable = (counter == 6'd0  ||
-                  counter == 6'd15 ||
+        enable = (counter == 6'd15 ||
                   counter == 6'd17 ||
                   counter == 6'd19 ||
                   counter == 6'd27 ||
