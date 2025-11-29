@@ -7,6 +7,9 @@ module clock
     output logic enable
 );
 
+    trafficComp comp (.m(mainTraffic),
+                      .s(sideTraffic));
+    
 always_comb begin
     enable = 1'b0;
     if (PED)
