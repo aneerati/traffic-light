@@ -1,9 +1,9 @@
 module clock
 (
-    input logic counter[5:0],
+    input logic [5:0] counter,
     input logic PED, 
-    input logic mainTraffic[2:0];
-    input logic sideTraffic[2:0];
+    input logic [2:0] mainTraffic,
+    input logic [2:0] sideTraffic,
     output logic enable
 );
 
