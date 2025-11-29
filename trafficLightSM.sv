@@ -6,7 +6,7 @@ module trafficLightSM (
     
     
     input logic pedToggle,
-    input logic clk,
+    input logic en,
     input logic reset,
     output logic MG,
     output logic MY,
@@ -31,14 +31,14 @@ module trafficLightSM (
     state Q = GR, nextQ;
     logic pedOn = 1'b0;
     
-    always_ff @(posedge clk or posedge reset or posedge pedToggle) begin
+    always_ff @(posedge en or posedge reset or posedge pedToggle) begin
         if (reset)
             Q <= GR;
-        else if (pedToggle && clk) begin
+        else if (pedToggle && en) begin
             pedOn = 1'b1;
             Q <= nextQ;
         end
-        else if (pedToggle && !clk)
+        else if (pedToggle && !en)
             pedOn = 1'b1;
         else 
             Q <= nextQ;
