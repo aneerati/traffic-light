@@ -6,9 +6,13 @@ module clock
     input logic [2:0] sideTraffic,
     output logic enable
 );
-
+    logic mGTs;
+    logic mLTs;
+    
     trafficComp comp (.m(mainTraffic),
-                      .s(sideTraffic));
+                      .s(sideTraffic),
+                      .mGTs(mGTs),
+                      .mLTs(mLTs));
     
 always_comb begin
     enable = 1'b0;
