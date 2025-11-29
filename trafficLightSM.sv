@@ -28,8 +28,8 @@ module trafficLightSM (
     logic pedOn;
     logic pedReset = 1'b0;
 
-    latch pedLatch (S.(pedToggle), R.(pedReset),
-                    Q.(pedOn));
+    latch pedLatch (.S(pedToggle), .R(pedReset),
+                    .Q(pedOn));
     
     always_ff @(posedge en or posedge reset) begin
         if (reset)
