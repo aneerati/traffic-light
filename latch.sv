@@ -14,5 +14,6 @@ module latch (
 			2'b10: Q <= 1'b1;
 			2'b11: Q <= 1'bx;
 		endcase
+	end
 	assign Qn = ~Q;
 endmodule
