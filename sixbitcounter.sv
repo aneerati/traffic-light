@@ -2,7 +2,6 @@
 module sixbitcounter(
     input  wire clk,     
     input  wire reset,
-    input wire button,
     output reg  [5:0] Q
 );
     reg [5:0] nextQ;
@@ -14,12 +13,8 @@ module sixbitcounter(
         nextQ[1] = Q[1] ^ Q[0];
         nextQ[0] = ~Q[0];
     end
-    always @(posedge clk or posedge reset) begin
+    always_ff @(posedge clk or posedge reset) begin
         if (reset)
-            Q <= 6'b000000;
-        else if( Q == 6'b100001 && button)
-            Q <= 6'b000000;
-        else if(Q == 6'b011101 && !button)
             Q <= 6'b000000;
         else
             Q <= nextQ;
