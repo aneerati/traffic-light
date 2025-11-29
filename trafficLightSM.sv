@@ -29,12 +29,12 @@ module trafficLightSM (
     logic pedReset = 1'b0;
 
     latch pedLatch (S.(pedToggle), R.(pedReset),
-                    Q.(pedON));
+                    Q.(pedOn));
     
     always_ff @(posedge en or posedge reset) begin
         if (reset)
             Q <= GR;
-        else if (en)
+        else 
             Q <= nextQ;
     end
             
@@ -58,6 +58,7 @@ module trafficLightSM (
         SY = 1'b0;
         SR = 1'b0;
         pedLight = 1'b0;
+        pedReset = 1'b0;
         
         case (Q)
             GR: begin
@@ -69,21 +70,25 @@ module trafficLightSM (
             YR: begin
                 MY = 1'b1;
                 SR = 1'b1;
+                pedReset = 1'b0;
             end
             
             RR1, RR2: begin
                 MR = 1'b1;
                 SR = 1'b1;
+                pedReset = 1'b0;
             end
             
             RG: begin
                 MR = 1'b1;
                 SG = 1'b1;
+                pedReset = 1'b0;
             end
             
             RY: begin
                 MR = 1'b1;
                 SY = 1'b1;
+                pedReset = 1'b0;
             end
             
             PED: begin
