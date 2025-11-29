@@ -1,9 +1,5 @@
 `default_nettype none
 module trafficLightSM (
-    // TESTS: REMOVE LATER
-    output logic [2:0] Qtest,
-    output logic pedOnTest,
-    
     
     input logic pedToggle,
     input logic en,
@@ -29,15 +25,17 @@ module trafficLightSM (
     } state;
     
     state Q = GR, nextQ;
-    logic pedOn = 1'b0;
+    logic pedOn;
+    logic pedReset = 1'b0;
+
+    latch pedLatch (S.(pedToggle), R.(pedReset),
+                    Q.(pedON));
     
-    always_ff @(posedge en or posedge reset or posedge pedToggle) begin
+    always_ff @(posedge en or posedge reset) begin
         if (reset)
             Q <= GR;
         else if (en)
             Q <= nextQ;
-        else if (pedToggle)
-            pedOn <= 1'b1;
     end
             
     always_comb begin
@@ -65,6 +63,7 @@ module trafficLightSM (
             GR: begin
                 MG = 1'b1;
                 SR = 1'b1;
+                pedReset = 1'b0;
             end
             
             YR: begin
@@ -91,13 +90,10 @@ module trafficLightSM (
                 MR = 1'b1;
                 SR = 1'b1;
                 pedLight = 1'b1;
-                pedOn = 1'b0;
+                pedReset = 1'b1;
             end
         endcase
     end
     
-    // REMOVE LATER
-    assign Qtest = Q;
-    assign pedOnTest = pedOn;
     
 endmodule
