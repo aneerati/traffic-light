@@ -34,14 +34,10 @@ module trafficLightSM (
     always_ff @(posedge en or posedge reset or posedge pedToggle) begin
         if (reset)
             Q <= GR;
-        else if (pedToggle && en) begin
-            pedOn = 1'b1;
+        else if (en)
             Q <= nextQ;
-        end
-        else if (pedToggle && !en)
-            pedOn = 1'b1;
-        else 
-            Q <= nextQ;
+        else if (pedToggle)
+            pedOn <= 1'b1;
     end
             
     always_comb begin
