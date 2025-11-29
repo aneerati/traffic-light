@@ -1,5 +1,5 @@
 `default_nettype none
-module SRLatch_Behavioral (
+module latch (
 	input  logic S,
 	input  logic R,
 	output logic Q,
