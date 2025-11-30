@@ -11,7 +11,8 @@ module trafficLightSM (
     output logic SY,
     output logic SR,
     output logic pedOn,
-    output logic pedLight
+    output logic pedLight,
+    output logic newCycle
 );
 
     //Main Street, Side Street
@@ -60,12 +61,14 @@ module trafficLightSM (
         SR = 1'b0;
         pedLight = 1'b0;
         pedReset = 1'b0;
+        newCycle = 1'b0;
         
         case (Q)
             GR: begin
                 MG = 1'b1;
                 SR = 1'b1;
                 pedReset = 1'b0;
+                newCycle = 1'b1;
             end
             
             YR: begin
