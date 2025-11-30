@@ -1,7 +1,7 @@
 `default_nettype none
 module trafficLightSM (
     
-    input logic pedToggle,
+    input logic pedButton,
     input logic en,
     input logic reset,
     output logic MG,
@@ -30,7 +30,7 @@ module trafficLightSM (
     
     logic pedReset = 1'b0;
 
-    latch pedLatch (.S(pedToggle & ~pedReset), .R(pedReset),
+    latch pedLatch (.S(pedButton & ~pedReset), .R(pedReset),
                     .Q(pedOn));
     
     always_ff @(posedge en or posedge reset) begin
