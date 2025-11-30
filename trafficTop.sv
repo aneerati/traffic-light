@@ -47,7 +47,7 @@ module trafficTop(
     end
   end
 
-  wire counterReset = newCycleSync & ~newCycleDelay;
+  wire counterReset = newCycleCopy & ~newCycleDelay;
 
   sixbitcounter trafficCounter(
     .clk(clk),
