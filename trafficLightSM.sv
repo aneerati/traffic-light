@@ -10,6 +10,7 @@ module trafficLightSM (
     output logic SG,
     output logic SY,
     output logic SR,
+    output logic pedOn,
     output logic pedLight
 );
 
@@ -25,7 +26,7 @@ module trafficLightSM (
     } state;
     
     state Q = GR, nextQ;
-    logic pedOn;
+    
     logic pedReset = 1'b0;
 
     latch pedLatch (.S(pedToggle & ~pedReset), .R(pedReset),
