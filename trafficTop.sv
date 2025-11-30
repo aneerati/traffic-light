@@ -15,10 +15,55 @@ module trafficTop(
 );
 
   logic [5:0] counter;
-  
-  sixbitcounter trafficCounter (.clk(clk),
-                                .reset(reset),
-                                .Q(counter));
+  logic enable;
+  logic pedToggle;
+  logic newCycle;
 
+  trafficLightSM trafficStates(
+      .pedButton (pedButton),
+      .en        (enable),
+      .reset     (reset),
+      .MG        (MG),
+      .MY        (MY),
+      .MR        (MR),
+      .SG        (SG),
+      .SY        (SY),
+      .SR        (SR),
+      .pedLight  (pedLight),
+      .pedOn     (pedToggle),
+      .newCycle     (newCycle));
+
+  logic newCycleCopy;
+  logic newCycleDelay;
+
+  always_ff @(posedge clk or posedge reset) begin
+    if (reset) begin
+      newCycleCopy <= 1'b0;
+      newCycleDelay <= 1'b0;
+    end
+    else begin
+      newCycleCopy <= newCycle;
+      newCycleDelay <= newCycleCopy;
+    end
+  end
+
+  wire counterReset = newCycleSync & ~newCycleDelay;
+
+  sixbitcounter trafficCounter(
+    .clk(clk),
+    .reset(counterReset),
+    .Q(counter));
+
+  clock trafficClock(
+    .clk(clk),
+    .reset(reset),
+    .counter(counter),
+    .PED(pedToggle),
+    .mainTrafficIn(mainTrafficIn),
+    .sideTrafficIn(sideTrafficIn),
+    .enable(enable));
+  
+endmodule
+    
   
   
