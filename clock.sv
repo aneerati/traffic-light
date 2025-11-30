@@ -1,5 +1,7 @@
 module clock
 (
+    input logic clk,
+    input logic reset, 
     input logic [5:0] counter,
     input logic PED, 
     input logic [2:0] mainTrafficIn,
@@ -8,25 +10,27 @@ module clock
 );
 
     
-    logic [2:0] mainTraffic;
-    logic [2:0] sideTraffic;
+    logic [2:0] mainCurrent, mainNext;
+    logic [2:0] sideCurrent, sideNext;
     logic mGTs;
     logic mLTs;
+
+    assign mainNext = (counter == 6'd0) ? mainTrafficIn : mainCurrent;
+    assign sideNext = (counter == 6'd0) ? sideTrafficIn : sideCurrent;
+
+    reg3 mainReg (.clk(clk), .reset(reset),
+                  .d(mainNext), .q(mainCurrent);
+    reg3 sideReg (.clk(clk), .reset(reset),
+                  .d(sideNext), .q(sideCurrent);
     
-    trafficComp comp (.m(mainTraffic),
-                      .s(sideTraffic),
+    trafficComp comp (.m(mainCurrent),
+                      .s(sideCurrent),
                       .mGTs(mGTs),
                       .mLTs(mLTs));
     
     
 always_comb begin
     enable = 1'b0;
-    mainTraffic = 3'b0;
-    sideTraffic = 3'b0;
-    if (counter == 6'd0) begin
-        mainTraffic = mainTrafficin;
-        sideTraffic = sideTrafficin;
-    end
     if (PED) begin
         if (mGTs)
             enable = (counter == 6'd15 ||
