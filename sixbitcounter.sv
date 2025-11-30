@@ -13,7 +13,7 @@ module sixbitcounter(
         nextQ[1] = Q[1] ^ Q[0];
         nextQ[0] = ~Q[0];
     end
-    always_ff @(posedge clk or posedge reset) begin
+    always_ff @(posedge clk) begin
         if (reset)
             Q <= 6'b000000;
         else
