@@ -6,7 +6,7 @@ module latch (
 	output logic Qn
 	);
 
-	initial Q = 1'b0;
+
 	always_latch begin 
 		case ({S, R})
 			2'b00: Q <= Q;
