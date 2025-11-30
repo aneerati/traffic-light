@@ -42,6 +42,7 @@ module trafficLightSM (
             RY: nextQ = RR2;
             RR2: nextQ = (pedOn == 1'b1) ? PED : GR;
             PED: nextQ = GR; 
+            default: nextQ = GR;
         endcase
     end
     always_comb begin
