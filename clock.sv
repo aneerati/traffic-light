@@ -19,9 +19,9 @@ module clock
     assign sideNext = (counter == 6'd0) ? sideTrafficIn : sideCurrent;
 
     reg3 mainReg (.clk(clk), .reset(reset),
-                  .d(mainNext), .q(mainCurrent);
+                  .d(mainNext), .q(mainCurrent));
     reg3 sideReg (.clk(clk), .reset(reset),
-                  .d(sideNext), .q(sideCurrent);
+                  .d(sideNext), .q(sideCurrent));
     
     trafficComp comp (.m(mainCurrent),
                       .s(sideCurrent),
