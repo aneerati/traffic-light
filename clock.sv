@@ -21,6 +21,12 @@ module clock
     
 always_comb begin
     enable = 1'b0;
+    mainTraffic = 3'b0;
+    sideTraffic = 3'b0;
+    if (counter == 6'd0) begin
+        mainTraffic = mainTrafficin;
+        sideTraffic = sideTrafficin;
+    end
     if (PED) begin
         if (mGTs)
             enable = (counter == 6'd15 ||
