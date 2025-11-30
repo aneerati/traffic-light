@@ -2,10 +2,14 @@ module clock
 (
     input logic [5:0] counter,
     input logic PED, 
-    input logic [2:0] mainTraffic,
-    input logic [2:0] sideTraffic,
+    input logic [2:0] mainTrafficIn,
+    input logic [2:0] sideTrafficIn,
     output logic enable
 );
+
+    
+    logic [2:0] mainTraffic;
+    logic [2:0] sideTraffic;
     logic mGTs;
     logic mLTs;
     
@@ -13,6 +17,7 @@ module clock
                       .s(sideTraffic),
                       .mGTs(mGTs),
                       .mLTs(mLTs));
+    
     
 always_comb begin
     enable = 1'b0;
