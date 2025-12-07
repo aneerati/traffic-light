@@ -1,20 +1,18 @@
-// -------------------- 7-seg decoder (0..9) --------------------
 module sevenseg_decoder (
-  parameter bit ACTIVE_LOW = 1   // 1=segments active-low (common anode)
+  parameter bit ACTIVE_LOW = 1   
 ) (
-  input  logic [3:0] d,          // BCD 0..9
-  output logic [6:0] seg         // a..g
+  input  logic [3:0] d,          
+  output logic [6:0] seg        
 );
-  logic [6:0] hi; // active-high
+  logic [6:0] hi;
   always_comb unique case (d)
     4'd0: hi=7'b1111110; 4'd1: hi=7'b0110000; 4'd2: hi=7'b1101101; 4'd3: hi=7'b1111001;
     4'd4: hi=7'b0110011; 4'd5: hi=7'b1011011; 4'd6: hi=7'b1011111; 4'd7: hi=7'b1110000;
-    4'd8: hi=7'b1111111; 4'd9: hi=7'b1111011; default: hi=7'b0000001; // dash
+    4'd8: hi=7'b1111111; 4'd9: hi=7'b1111011; default: hi=7'b0000001; 
   endcase
   assign seg = ACTIVE_LOW ? ~hi : hi;
 endmodule
 
-// -------------------- Clock ticks --------------------
 module pulse_div #(parameter int FCLK=100_000_000, parameter int HZ=1)(
   input  logic clk, rst_n,
   output logic tick
@@ -30,15 +28,14 @@ module pulse_div #(parameter int FCLK=100_000_000, parameter int HZ=1)(
   end
 endmodule
 
-// -------------------- Walk timer --------------------
 module walk_timer #(
   parameter int WALK_SECS = 10
 ) (
   input  logic clk, rst_n, tick_1hz, tick_flash,
-  input  logic walk_start,             // 1-cycle
-  output logic walk_active, walk_done, // pulse on finish
-  output logic walk_led,               // flashes while active
-  output logic [6:0] secs              // up to 127 secs (we use 0..WALK_SECS)
+  input  logic walk_start,            
+  output logic walk_active, walk_done, 
+  output logic walk_led,               
+  output logic [6:0] secs              
 );
   typedef enum logic {IDLE,RUN} st_t; st_t st;
   logic [6:0] rem; logic led_q;
@@ -63,17 +60,16 @@ module walk_timer #(
   assign secs        = rem;
 endmodule
 
-// -------------------- Two-digit 7-seg multiplexer --------------------
 module sevenseg2 #(
-  parameter bit SEG_ACTIVE_LOW = 1,        // segments polarity
-  parameter bit AN_ACTIVE_LOW  = 1         // anode/cathode polarity
+  parameter bit SEG_ACTIVE_LOW = 1,        
+  parameter bit AN_ACTIVE_LOW  = 1         
 ) (
   input  logic clk, rst_n, tick_mux,
   input  logic [3:0] ones, tens,
   output logic [6:0] seg,
-  output logic [3:0] an                    // an[0]=ones, an[1]=tens
+  output logic [3:0] an                    
 );
-  logic sel; // 0 ones, 1 tens
+  logic sel; 
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) sel<=0; else if(tick_mux) sel<=~sel;
   end
@@ -82,36 +78,32 @@ module sevenseg2 #(
     .d(sel ? tens : ones), .seg(seg)
   );
 
-  // enable exactly one digit
   always_comb begin
-    logic [3:0] hi = sel ? 4'b0010 : 4'b0001;      // active-high intent
+    logic [3:0] hi = sel ? 4'b0010 : 4'b0001;      
     an = AN_ACTIVE_LOW ? ~hi : hi;
   end
 endmodule
 
-// -------------------- Top: universal pedestrian display --------------------
 module ped_walk_display #(
-  parameter int FCLK_HZ       = 100_000_000, // your board clock
-  parameter int WALK_SECS     = 10,          // countdown seconds
-  parameter int MUX_HZ        = 1000,        // 1–4 kHz typical
-  parameter int FLASH_HZ      = 2,           // LED blink rate
-  parameter bit SEG_ACTIVE_LOW= 1,           // 1=common-anode segments
-  parameter bit AN_ACTIVE_LOW = 1            // 1=common-anode enables
+  parameter int FCLK_HZ       = 100_000_000, 
+  parameter int WALK_SECS     = 10,         
+  parameter int MUX_HZ        = 1000,        
+  parameter int FLASH_HZ      = 2,          
+  parameter bit SEG_ACTIVE_LOW= 1,        
+  parameter bit AN_ACTIVE_LOW = 1          
 ) (
   input  logic clk, rst_n,
-  input  logic walk_start,        // pulse from traffic FSM
-  output logic walk_done,         // pulse to traffic FSM
-  output logic walk_led,          // blink while active
+  input  logic walk_start,       
+  output logic walk_done,        
+  output logic walk_led,          
   output logic [6:0] seg,
   output logic [3:0] an
 );
-  // ticks
   logic t1hz, tmux, tflash;
   pulse_div #(.FCLK(FCLK_HZ), .HZ(1        )) div1 (.clk(clk), .rst_n(rst_n), .tick(t1hz));
   pulse_div #(.FCLK(FCLK_HZ), .HZ(MUX_HZ   )) divm (.clk(clk), .rst_n(rst_n), .tick(tmux));
   pulse_div #(.FCLK(FCLK_HZ), .HZ(2*FLASH_HZ)) divf (.clk(clk), .rst_n(rst_n), .tick(tflash));
 
-  // timer
   logic active; logic [6:0] secs;
   walk_timer #(.WALK_SECS(WALK_SECS)) wt(
     .clk(clk), .rst_n(rst_n), .tick_1hz(t1hz), .tick_flash(tflash),
@@ -119,13 +111,12 @@ module ped_walk_display #(
     .walk_led(walk_led), .secs(secs)
   );
 
-  // BCD split
   logic [3:0] ones = secs % 10;
   logic [3:0] tens = (secs/10) % 10;
 
-  // display
   sevenseg2 #(.SEG_ACTIVE_LOW(SEG_ACTIVE_LOW), .AN_ACTIVE_LOW(AN_ACTIVE_LOW)) disp(
     .clk(clk), .rst_n(rst_n), .tick_mux(tmux),
     .ones(ones), .tens(tens), .seg(seg), .an(an)
   );
 endmodule
+
